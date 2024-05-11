@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="flex justify-between items-center">
+    <h3>Código do sorteio: <%=@seed%></h3>
+    <%= link_to "<< Página inicial", root_path%>
+  </div>
+<div class="columns-2 mt-5">
+<!-- Table responsive wrapper -->
+<%torres = [{torre: "torre floresta", resultado: @floresta},
+            {torre: "torre campos", resultado: @campos}]%>
+<%torres.each do |torre|%>
+  <div class="overflow-x-auto bg-white">
+    <!-- Table -->
+    <table class="min-w-full text-left text-sm whitespace-nowrap">
+      <!-- Table head -->
+      <caption class="text-center text-xl uppercase font-semibold border-b-2"><%=torre[:torre]%></caption>
+      <thead class="uppercase tracking-wider border-b-2">
+        <tr>
+          <th scope="col" class="px-1 py-3">
+            Apartamento
+          </th>
+          <th scope="col" class="px-1 py-3">
+            vaga número
+          </th>
+          <th scope="col" class="px-1 py-3">
+            tipo
+          </th>
+          <th scope="col" class="px-1 py-3">
+            Andar
+          </th>
+        </tr>
+      </thead>
+
+      <!-- Table body -->
+      <tbody>
+
+        <tr class="border-b dark:border-neutral-600">
+          <%torre[:resultado].each_with_index do |resultado, index|%>
+            <%if index.even?%>
+              <tr scope="row" class="px-3 py-2">
+            <%else%>
+              <tr scope="row" class="px-3 py-2 bg-neutral-50">
+            <%end%>
+            <td class="px-1 py-2"><%=resultado[:apto]%></td>
+            <td class="px-1 py-2"><%=resultado[:vaga]%></td>
+            <td class="px-1 py-2"><%=resultado[:tipo_vaga]%></td>
+            <td class="px-1 py-2"><%=resultado[:andar]%></td>
+          <%end%>
+          </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+<%end%>
+
+</div>
+
+
+<%# class="xl:pl-60 sticky left-0 top-0 z-50 w-full bg-white shadow-dark-mild dark:bg-body-dark" %>
+<%# class="relative flex w-full flex-wrap items-center justify-between bg-zinc-50 py-2 shadow-dark-mild dark:bg-neutral-700 lg:py-4" %>

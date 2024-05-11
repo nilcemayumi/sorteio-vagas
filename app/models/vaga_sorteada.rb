@@ -1,0 +1,2 @@
+class VagaSorteada < ApplicationRecord
+end
