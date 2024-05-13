@@ -127,14 +127,12 @@ class SorteiosController < ApplicationController
     {coberto: coberto, descoberto: descoberto}
   end
 
-  def definir_duplas_vagas_divididas(aptos, seed)
+  def definir_duplas_vagas_divididas(aptos,seed)
     aptos.shuffle!(random: Random.new(seed))
     resultado = []
     aptos_floresta = []
     aptos_campos = []
-    aptos.each do |apto|
-      apto.torre == 'A' ? aptos_floresta << apto : aptos_campos << apto
-    end
+    aptos.each {|apto| apto.torre == 'A' ? aptos_floresta << apto : aptos_campos << apto }
     while aptos_floresta.count > 1 do
       apto1 = aptos_floresta.shift
       apto2 = aptos_floresta.shift
@@ -152,7 +150,8 @@ class SorteiosController < ApplicationController
       if aptos_floresta.first.vaga == 'descoberta'
         resultado << aptos_campos.first
       else
-        vaga1 = Vaga.where("sorteada = false AND pref_torre IS NULL AND andar != '-3' AND subtipo = 'coberta'").order(id: :asc).shuffle(random: Random.new(seed)).first
+        vaga1 = Vaga.where("sorteada = false AND tipo = 'dupla' AND pref_torre IS NULL AND andar != '-3' AND subtipo = 'coberta'").order(id: :asc)
+        vaga1 = vaga1.shuffle(random: Random.new(seed)).first
         vaga2 = Vaga.find_by(numero: vaga1.vaga_relacionada)
         relacionar_vaga_apto(vaga1, aptos_floresta.first)
         relacionar_vaga_apto(vaga2, aptos_campos.first)
@@ -192,7 +191,7 @@ class SorteiosController < ApplicationController
 
   def salvar_csv(seed)
     resultados = VagaSorteada.all.order(vagas_id: :asc)
-    filepath = "csv/sorteio vagas - resultado sorteio.csv"
+    filepath = "/home/nilce/Documentos/resultado sorteio vagas/resultado sorteio_#{seed}.csv"
     CSV.open(filepath, "wb") do |csv|
       csv << ["seed: #{seed}"]
       csv << ["numero vaga", "andar", "apartamento"]
@@ -225,6 +224,7 @@ class SorteiosController < ApplicationController
     aptos_vagas_duplas.each do |apto|
       vaga1 = Vaga.where("sorteada = false AND tipo = 'dupla' AND subtipo = 'coberta' AND pref_torre = ?", apto.torre).order(id: :asc).first
       vaga1 = Vaga.where("sorteada = false AND tipo = 'dupla' AND subtipo = 'coberta'AND pref_torre IS NULL").order(id: :asc).first if vaga1.nil?
+      vaga1 = Vaga.where("sorteada = false AND tipo = 'dupla' AND subtipo = 'coberta'").order(id: :asc).first if vaga1.nil?
       relacionar_vaga_apto(vaga1, apto)
       vaga2 = Vaga.find_by(numero: vaga1.vaga_relacionada)
       apto2 = apto.apto_relacionado.nil? ? apto : Apartamento.find_by(numero: apto.apto_relacionado)
